@@ -6,4 +6,6 @@
 
 #define _XOPEN_SOURCE 500
 
+#define OPR 3
+
 #endif
