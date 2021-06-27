@@ -10,20 +10,22 @@
 
 void getFreeBlocks(){
 	FILE *fd = NULL;
-	char *addedPath = "/fusedata.";
+	char *addedPath = "/data.";
 	char str[5];
 	char num[5];
 	int i =0 , j = 0 , pos = 0 , number = 0;
 	char *fileContent = (char *) malloc(BLOCK_SIZE);
 	char *tmpPath=(char *) malloc(30);
+    
 	for(i = 1; i < 26 ;i++){
-		strcpy(tmpPath,"FileSysData");
+		strcpy(tmpPath,"FileData");
 		sprintf(str, "%d", i);
 		strcat(tmpPath,addedPath);
 		char *filename = strcat(tmpPath,str);
 		fd = fopen(filename,"r");
 		fscanf(fd, "%s", fileContent);		
 		j = 1;
+        //printf("aca2 %s\n",fileContent);
 		while(fileContent[j] != '}'){
 			pos = 0;
 			while(fileContent[j] != ','){	
@@ -47,7 +49,7 @@ void setFreeBlocks(int block){
 	char str[5];	
 	char *tmpPath=(char *) malloc(30);
 	sprintf(str, "%d", freeBlock);
-	strcpy(tmpPath,"FileSysData/fusedata.");
+	strcpy(tmpPath,"FileData/data.");
 	strcat(tmpPath,str);
 	FILE *fd = NULL;
 	char *fileContent = (char *) malloc(BLOCK_SIZE);	
@@ -78,7 +80,7 @@ void addFreeBlocks(int block){
 	char str[5];	
 	char *tmpPath=(char *) malloc(30);
 	sprintf(str, "%d", freeBlock);
-	strcpy(tmpPath,"FileSysData/fusedata.");
+	strcpy(tmpPath,"FileData/data.");
 	strcat(tmpPath,str);
 	FILE *fd = NULL;
 	char *fileContent = (char *) malloc(BLOCK_SIZE);	
@@ -110,7 +112,7 @@ int getOneBlock(){
 			char str[5];	
 			char *tmpPath=(char *) malloc(30);
 			sprintf(str, "%d", i);
-			strcpy(tmpPath,"FileSysData/fusedata.");
+			strcpy(tmpPath,"FileData/data.");
 			strcat(tmpPath,str);
 			FILE *fd = NULL;	
 			fd = fopen(tmpPath,"w");
@@ -147,12 +149,12 @@ int getThatBlock(const char *path){
 	}
 	FILE *fd = NULL;
 	char *fileContent = (char *) malloc(BLOCK_SIZE);
-	char *addedPath = "fusedata.";
+	char *addedPath = "data.";
 	char str[5];
 	char *tmpPath=(char *) malloc(30);
 	int fileNum = 26;
 	for(i = 1 ; i < pos ; i++){		
-		strcpy(tmpPath,"FileSysData/");		
+		strcpy(tmpPath,"FileData/");		
 		sprintf(str, "%d", fileNum);
 		strcat(tmpPath,addedPath);		
 		char *filename = strcat(tmpPath,str);

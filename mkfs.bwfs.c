@@ -67,32 +67,38 @@ static void initialize(){
 
 
 
-static void amay_init(){
-	system("mkdir -p FileSysData");
+static void my_init(){
+	system("mkdir -p FileData");
 	char *buff = (char *) malloc(512);
 	memset(buff,'0',512);
+    
 	FILE *fd = NULL;
-	fd = fopen("FileSysData/fusedata.0","r");
+	fd = fopen("FileData/data.0","r");
+    printf("max \n");
 	if(fd == NULL){
 		int i=0,j=0;
-		char *addedPath = "/fusedata.";
+		char *addedPath = "/data.";
 		char str[5];
 		char *tmpPath=(char *) malloc(30);
+        printf("max \n");
 		for(i = 0; i < MAX_BLOCKS ;i++){
-			strcpy(tmpPath,"FileSysData");
+			strcpy(tmpPath,"FileData");
 			sprintf(str, "%d", i);
 			strcat(tmpPath,addedPath);
 			char *filename = strcat(tmpPath,str);
 			fd = fopen(filename,"w");
-			for(j = 0; j < 8;j++){ // to write 4096 0's i.e. 512 bytes 8 times.
+			for(j = 0; j < 8;j++){ 
 				fprintf(fd,"%s",buff);
 			}
 			fclose(fd);
 		}
 		initialize();
 	}	
+    
 	getFreeBlocks();
-	free(buff);		
+    printf("aca3\n");
+	free(buff);	
+    	
 }
 
 
@@ -102,7 +108,7 @@ static void  MakeFiles(const char *path, int block){
 	char str[5];
 	sprintf(str, "%d", block);
 	char *tmpPath=(char *) malloc(30);
-	strcpy(tmpPath, "FileSysData/fusedata.");
+	strcpy(tmpPath, "FileData/data.");
 	strcat(tmpPath, str);
 	fd = fopen(tmpPath,"r");
 	fscanf(fd, "%[^\n]s", fileContent);
@@ -117,7 +123,7 @@ static void  MakeFiles(const char *path, int block){
 	while(fileContent[pos2++]!='}'){}
 	strcpy(substr, "");
 	strncat(substr, fileContent+pos1,pos2-pos1-1);	
-	strcpy(tmpPath, "FileSysData/fusedata.");
+	strcpy(tmpPath, "FileData/data.");
 	strcat(tmpPath, substr);
 	strcpy(fileContent,"");	
 	fd = fopen(tmpPath,"r");
@@ -153,7 +159,7 @@ static void  MakeFiles(const char *path, int block){
 			str [tmp++] = fileContent[i++];
 		}
 		for(i = 0 ; i < pos1 ; i++){				
-			strcpy(tmpPath, "FileSysData/fusedata.");
+			strcpy(tmpPath, "FileData/data.");
 			sprintf(str, "%d", listofFile[i]);
 			strcat(tmpPath, str);	
 			fd = fopen(tmpPath,"r");
@@ -175,7 +181,7 @@ static void  LoadFS(const char *path, int block){
 	char str[5];
 	sprintf(str, "%d", block);
 	char *tmpPath=(char *) malloc(30);
-	strcpy(tmpPath, "FileSysData/fusedata.");
+	strcpy(tmpPath, "FileData/data.");
 	strcat(tmpPath, str);
 	fd = fopen(tmpPath,"r");
 	fscanf(fd, "%[^\n]s", fileContent);
@@ -245,15 +251,17 @@ static void  LoadFS(const char *path, int block){
 
 
 int main(int argc, char *argv[]){
-	amay_init();
+	printf("aca\n");
+    my_init();
+    
 	system("rm -rf /tmp/*");
 	LoadFS("/tmp",26);				
 	if(argc != 1){
-		printf("Usage : ./AmayFuse\n");
+		printf("Usage : ./mkfs [mount point] [password]\n");
 		return -1;
 	}
-	system("rm -rf Amay");
-	system("mkdir -p Amay");
-	argv[argc++] = "Amay";
+	system("rm -rf BWFS");
+	system("mkdir -p BWFS");
+	argv[argc++] = "BWFS";
 	umask(0);
 }

@@ -47,13 +47,13 @@ static void makedir(const char *path){
 	FILE *fd = NULL;
 	time_t seconds = time(NULL);
 	char *tmpPath=(char *) malloc(30);
-	strcpy(tmpPath,"FileSysData/fusedata.");
+	strcpy(tmpPath,"FileData/data.");
 	strcat(tmpPath,str);	
 	fd = fopen(tmpPath,"w");	
 	fprintf(fd,"{size:0,uid:1000,gid:1000,mode:16877,atime:%ld,ctime:%ld,mtime:%ld,linkcount:2,filename_to_inode_dict:{d:.:%d,d:..:%d}}",seconds,seconds,seconds,block,rootblocknum);
 	fclose(fd);	
 	sprintf(str, "%d", rootblocknum);		
-	strcpy(tmpPath,"FileSysData/fusedata.");
+	strcpy(tmpPath,"FileData/data.");
 	strcat(tmpPath,str);
 	char *fileContent = (char *) malloc(BLOCK_SIZE);	
 	fd = fopen(tmpPath,"r");
@@ -113,7 +113,7 @@ static void removeFile(int block){
 	char str[5];
 	sprintf(str, "%d", block);
 	char *tmpPath=(char *) malloc(30);
-	strcpy(tmpPath, "FileSysData/fusedata.");
+	strcpy(tmpPath, "FileData/data.");
 	strcat(tmpPath, str);
 	fd = fopen(tmpPath,"r");
 	fscanf(fd, "%[^\n]s", fileContent);
@@ -134,7 +134,7 @@ static void removeFile(int block){
 		addFreeBlocks(tmp);
 	}else{
 		addFreeBlocks(block);
-		strcpy(tmpPath, "FileSysData/fusedata.");
+		strcpy(tmpPath, "FileData/data.");
 		strcat(tmpPath, substr);
 		strcpy(fileContent,"");	
 		fd = fopen(tmpPath,"r");
@@ -180,7 +180,7 @@ static void removeDirectories(int block){
 	char str[5];
 	sprintf(str, "%d", block);
 	char *tmpPath=(char *) malloc(30);
-	strcpy(tmpPath, "FileSysData/fusedata.");
+	strcpy(tmpPath, "FileData/data.");
 	strcat(tmpPath, str);
 	fd = fopen(tmpPath,"r");
 	fscanf(fd, "%[^\n]s", fileContent);
@@ -236,7 +236,7 @@ static void removeDir(const char *path, int fileDir){
 	char str[5];
 	char *tmpPath=(char *) malloc(30);
 	sprintf(str, "%d", rootblocknum);		
-	strcat(tmpPath,"FileSysData/fusedata.");
+	strcat(tmpPath,"FileData/data.");
 	strcat(tmpPath,str);
 	char *fileContent = (char *) malloc(BLOCK_SIZE);	
 	FILE *fd = NULL;
@@ -336,7 +336,7 @@ static void renameDir(const char *from, const char *to){
 	char str[5];
 	char *tmpPath=(char *) malloc(30);
 	sprintf(str, "%d", rootblocknum);		
-	strcat(tmpPath,"FileSysData/fusedata.");
+	strcat(tmpPath,"FileData/data.");
 	strcat(tmpPath,str);
 	char *fileContent = (char *) malloc(BLOCK_SIZE);	
 	FILE *fd = NULL;
@@ -391,13 +391,13 @@ static void makeFile(const char *path){
 	FILE *fd = NULL;
 	time_t seconds = time(NULL);
 	char *tmpPath=(char *) malloc(30);
-	strcpy(tmpPath,"FileSysData/fusedata.");
+	strcpy(tmpPath,"FileData/data.");
 	strcat(tmpPath,str);
 	fd = fopen(tmpPath,"w");
 	fprintf(fd,"{size:0,uid:1,gid:1,mode:33261,linkcount:2,atime:%ld,ctime:%ld,mtime:%ld,indirect:0,location:%d}",seconds,seconds,seconds,blockfile);
 	fclose(fd);	
 	sprintf(str, "%d", rootblocknum);		
-	strcpy(tmpPath,"FileSysData/fusedata.");
+	strcpy(tmpPath,"FileData/data.");
 	strcat(tmpPath,str);
 	char *fileContent = (char *) malloc(BLOCK_SIZE);	
 	fd = fopen(tmpPath,"r");
@@ -479,7 +479,7 @@ static void writeToFile(const char *path){
 		ch[tmp++]=path[i++];
 	}		
 	strcpy(lastPath,ch);	
-	strcpy(tmpPath,"FileSysData/fusedata.");
+	strcpy(tmpPath,"FileData/data.");
 	strcat(tmpPath,str);
 	char *fileContent = (char *) malloc(BLOCK_SIZE);	
 	fd = fopen(tmpPath,"r");
@@ -495,13 +495,11 @@ static void writeToFile(const char *path){
 			break;
 		}pos2++;
 	}
-	printf("after getting file block number\n");
 	strcpy(filenum,"");
 	strncat(filenum, fileContent+pos1, pos2-pos1);	
 	printf("filenum %s\n",filenum);
-	strcpy(tmpPath,"FileSysData/fusedata.");
+	strcpy(tmpPath,"FileData/data.");
 	strcat(tmpPath,filenum);
-	printf("going to get size of buffer\n");
 	int size = strlen(buffer);
 	printf("size %d\n",size);
 	int numFiles = size/BLOCK_SIZE +1;	
@@ -526,7 +524,7 @@ static void writeToFile(const char *path){
 	while(fileContent[pos2++]!='}'){}
 	strcpy(filenum,"");
 	strncat(filenum, fileContent+pos1, pos2-pos1-1);	
-	strcpy(tmpPath,"FileSysData/fusedata.");
+	strcpy(tmpPath,"FileData/data.");
 	strcat(tmpPath,filenum);
 	printf("buffer %s\n", buffer);		
 	if(numFiles == 1){
@@ -605,7 +603,7 @@ static void writeToFile(const char *path){
 		}		
 		for(i =0 ; i < pos1 ; i++){	
 			char *filePath=(char *) malloc(30);
-			strcpy(filePath,"FileSysData/fusedata.");
+			strcpy(filePath,"FileData/data.");
 			strcat(filePath,listofFile[i]);
 			strncpy(fileContent,(buffer + (4096*i)),4096);
 			fd = fopen(filePath,"w");
@@ -692,13 +690,13 @@ static int my_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 static int my_mkdir(const char *path, mode_t mode){
 	int res;
 	if(path[0] == '/' && path[1] == 't' && path[2] == 'm' && path[3] == 'p'){
-		printf("Making Dir %s\n",path);	
+		printf("Creando Directorio %s\n",path);	
 		makedir(path);
 		res = mkdir(path, mode);
 		if (res == -1)
 			return -errno;
 	}else{
-		printf("==CANNOT DO THAT NOT OUTSIDE /tmp Dir\n");		
+		printf("error debe estar en el directorio /tmp \n");		
 	}
 	return 0;
 }
@@ -716,20 +714,20 @@ static int my_unlink(const char *path){
 static int my_rmdir(const char *path){
 	int res;
 	if(path[0] == '/' && path[1] == 't' && path[2] == 'm' && path[3] == 'p'){
-		printf("Removing Dir %s\n",path);	
+		printf("Eliminando Dir %s\n",path);	
 		removeDir(path,0);
 		res = rmdir(path);
 		if (res == -1)
 			return -errno;
 	}else{
-		printf("CANNOT DO THAT NOT OUTSIDE /tmp Dir\n");
+		printf("error debe estar en el directorio /tmp \n");
 		return 0;
 	}
 }
 
 static int my_rename(const char *from, const char *to){
 	int res;
-	printf("Renaming %s to %s\n",from,to);	
+	printf("Renaming %s a %s\n",from,to);	
 	if(write_buf_flag == 0){
 		renameDir(from, to);	
 	}else{
@@ -743,7 +741,7 @@ static int my_rename(const char *from, const char *to){
 
 static int my_create(const char *path, mode_t mode, struct fuse_file_info *fi){	
 	if(path[0] == '.'){
-		printf("Don't put in dot(.)\n");	
+		printf("Error caracter no esperado (.)\n");	
 		return;	
 	}
 	int fd;
@@ -797,7 +795,7 @@ static int my_write(const char *path, const char *buf, size_t size,
 	printf("in %s\n", buf);
 	buffer = (char *) malloc(strlen(buf));	
 	strcpy(buffer,buf);	
-	printf("going to write %s",buf);	
+	printf("write %s",buf);	
 	writeToFile(path);	
 	write_buf_flag=1;
 	if (res == -1)
